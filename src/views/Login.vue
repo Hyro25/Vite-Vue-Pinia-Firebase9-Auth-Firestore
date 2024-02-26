@@ -7,16 +7,19 @@
             <button type="submit" :disabled="userStore.loadingUser">Acceso</button>
         </form>
         <p v-else>Cargando...</p>
+        <p v-if="error" class="error-message">{{ error }}</p>
     </div>
 </template>
 
 <script setup>
     import { ref } from 'vue';
     import { useUserStore } from '../stores/user';
-    // import { useRouter } from 'vue-router';
+    import { useRouter } from 'vue-router';
 
     const userStore = useUserStore();
-   //  const router = useRouter();
+    const router = useRouter();
+    const error = ref(null);
+
 
     const email = ref('');
     const password = ref('');
@@ -28,13 +31,17 @@
         }
         loading.value = true;
         try {
-            await userStore.loginUser(email.value, password.value);
-            
+             await userStore.loginUser(email.value, password.value);
+            debugger
             router.push("/");
         } catch (error) {
-            console.log(error);
+            error.value = error.message;
         } finally {
             loading.value = false;
         }
+
+        
     };
+
+    
 </script>
