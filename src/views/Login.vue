@@ -21,8 +21,8 @@
     const error = ref(null);
 
 
-    const email = ref('');
-    const password = ref('');
+    const email = ref('llujyusweb1@test.com');
+    const password = ref('123123');
     const loading = ref(false);
 
     const handleSubmit = async () => {

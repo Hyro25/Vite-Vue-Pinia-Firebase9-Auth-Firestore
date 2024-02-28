@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Home</h1>
+        <h1>Home Ruta protegida</h1>
         <!-- <p v-if="userStore.userData">{{ userStore.userData.email}} </p> 
         <p v-else>No hay información de usuario disponible</p>  se muestra en ambas opciones -->
         <p> {{ userStore.userData?.email}} </p>
