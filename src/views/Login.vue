@@ -32,7 +32,7 @@
         loading.value = true;
         try {
              await userStore.loginUser(email.value, password.value);
-            debugger
+            
             router.push("/");
         } catch (error) {
             error.value = error.message;

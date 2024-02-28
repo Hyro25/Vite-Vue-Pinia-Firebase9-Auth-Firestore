@@ -7,12 +7,16 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import router from "../router"; // Cambia la importación para que sea un import default
+import router from "../router";
+import {useDatabaseStore} from './database'
+
+
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
     userData: null,
     loadingUser: false,
+    loadingSesion: false,
   }),
   actions: {
     async registerUser(email, password) {
@@ -54,56 +58,46 @@ export const useUserStore = defineStore("userStore", {
       }
     },
     async logoutUser() {
-      this.loadingUser = true;
+      const databaseStore = useDatabaseStore();
+      databaseStore.$reset();
       try {
         await signOut(auth);
         this.userData = null;
         router.push("/login");
       } catch (error) {
         console.log(error);
-      } finally {
-        this.loadingUser = false;
-      }
+      } 
     },
 
     async currentUser() {
-        debugger;
-        try {
-            const user = await new Promise((resolve, reject) => {
-                    const unsuscribe = onAuthStateChanged(auth,
-                        (user) => {
-                            unsuscribe()
-                            resolve(user)
-                        },reject)
-            })
-            debugger
-            if (user) {
-                this.userData = {
-                email: user.email,
-                uid: user.uid,
-               };
-            } else {
-                this.userData = null;
-             }
-             return user
-            // return new Promise((resolve, reject) => {
-            //     const unsuscribe = onAuthStateChanged(
-            //       auth,
-                  
-                    
-                     
-                     
-            //         resolve(user);
-            //       },
-            //       (e) => reject(e)
-            //     );
-            //     unsuscribe();
-            //   });
-            
-
-        } catch (error) {
-            console.log(error)    
+      
+      try {
+        const user = await new Promise((resolve, reject) => {
+          const unsuscribe = onAuthStateChanged(
+            auth,
+            (user) => {
+              unsuscribe();
+              resolve(user);
+            },
+            reject
+          );
+        });
+        
+        if (user) {
+          this.userData = {
+            email: user.email,
+            uid: user.uid,
+          };
+        } else {
+          this.userData = null;
+          const databaseStore = useDatabaseStore();
+          databaseStore.$reset();
         }
+        return user;
+       
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 });
